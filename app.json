@@ -23,7 +23,7 @@
     "userInterfaceStyle": "light",
 
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Logo2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
