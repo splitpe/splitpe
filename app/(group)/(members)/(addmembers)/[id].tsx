@@ -1,19 +1,22 @@
-import { Stack } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 
 import { Container } from '~/components/Container';
+import CustomStackScreen from '~/components/CustomStackScreen';
 import { ScreenContent } from '~/components/ScreenContent';
-import UserItem from '~/components/UserItem';
 import UserSearchList from '~/components/UserSearchList';
+import {Text} from 'react-native'
 
 export default function Home() {
-  const item = { id: 1, full_name: 'John Doe', avatar_url: 'https://i.pravatar.cc/300' };
+    const params = useLocalSearchParams();
+  const groupId = params.id;
   return (
     <>
-      <Stack.Screen options={{ title: 'Theme' }} />
+      <CustomStackScreen />
       {/* <Container>
         <ScreenContent path="app/(drawer)/(tabs)/theme.tsx" title="Theme" />
       </Container> */}
-<UserSearchList></UserSearchList>
+      <Text>{groupId}</Text>
+      <UserSearchList groupId={groupId}></UserSearchList>
     </>
  
 );

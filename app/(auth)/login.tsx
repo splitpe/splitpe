@@ -30,7 +30,7 @@ export default function Auth() {
   const [countryCode, setCountryCode] = useState('')
 
   const logoImage= {
-    image: require("../../assets/Logo.png"),
+    image: require("../../assets/LogoAppName.png"),
     location: "Chennai",
     status: 1,
     projectId: 1
@@ -45,7 +45,7 @@ export default function Auth() {
     })
 
     if (error) Alert.alert(error.message)
-    else Alert.alert('Logged In!')
+    // else Alert.alert('Logged In!')
     setLoading(false)
   }
 
@@ -69,9 +69,9 @@ export default function Auth() {
   return (
 
     <View className='flex-1 justify-center items-center gap-4'>
-        <Stack.Screen options={{ title: 'Sign Up' }}></Stack.Screen>
-        <Image source={logoImage.image} className='w-60 h-60'></Image>
-      <View className='w-4/5'>
+        <Stack.Screen options={{ title: 'Login' }}></Stack.Screen>
+        <Image source={logoImage.image} className='w-64 h-60 mb-5'></Image>
+      <View className='w-5/6'>
      
         <TextInput className='bg-primary-light p-4  text-black rounded-lg'
           onChangeText={(text) => setEmail(text)}
@@ -97,14 +97,14 @@ export default function Auth() {
         <Text disabled={loading} >Sign Up</Text>
       </Pressable>
       <Pressable className='bg-primary px-10 rounded-lg'  onPress={() => signInWithEmail()}>
-        <Text className=' p-4  text-primary-dark' disabled={loading} >Sign in</Text>
+        <Text className=' p-4  text-white' disabled={loading} >Sign in</Text>
       </Pressable>
      
 
       </View>
-      <Pressable className='bg-primary px-10 rounded-lg'  onPress={() => signUpWithEmail()}>
+      {/* <Pressable className='bg-primary px-10 rounded-lg'  onPress={() => signUpWithEmail()}>
         <Text className=' p-4  text-primary-dark' disabled={loading} >Sign Up T</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   )
 }

@@ -26,10 +26,10 @@ export default function AppInfo() {
         <>
             {/* <ScreenContent path="app/(auth)/appinfo.tsx" title="App Info" /> */}
             <Stack.Screen options={{ title: 'App Info' }}></Stack.Screen>
-            <SafeAreaView className='flex-1 p-6'>
+            <SafeAreaView className='flex-1 p-4'>
         <Text className='text-3xl font-bold'>Splitpe</Text>
         <View className='items-center'>
-         <Image className='w-96 h-96'
+         <Image className='w-96 h-96 xl:w-72 xl:h-72'
           source={item.image}
         />
       </View>
@@ -43,7 +43,7 @@ export default function AppInfo() {
           <FeatureItem text="Effortlessly captures and processes expense messages." />
         </View>
       
-       <TouchableOpacity  className='mt-4 flex-row item-right justify-end'>
+       <TouchableOpacity  className='flex-row item-right justify-end'>
        <Pressable onPress={() => router.push('/login')} >
         <Text className='text-lg text-white px-8 py-2 rounded-lg bg-blue-400 border-2 border-gray-300 rounded-lg p-2' >Login</Text>
         </Pressable>

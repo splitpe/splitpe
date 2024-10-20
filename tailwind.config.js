@@ -7,10 +7,17 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          light: '#CADCFC',  // Add custom light primary color
-          DEFAULT: '#8AB6F9', // Default primary color
-          dark: '#00246B',    // Add custom dark primary color
+          light: '#e9e1f4',  // Add custom light primary color
+          DEFAULT: '#B57EDC', // Default primary color
+          dark: '#005271',    // Add custom dark primary color
         },
+        // primary: {
+        //   light: '#e9e1f4',  // Add custom light primary color
+        //   DEFAULT: '#9067C6', // Default primary color
+        //   dark: '#005271',    // Add custom dark primary color
+        // },
+
+
         secondary: {
           light: '#EDEDED',  // Add custom secondary light color
           DEFAULT: '#6C6C6C', // Default secondary color
@@ -23,3 +30,12 @@ module.exports = {
   },
   plugins: [],
 };
+
+
+//Liked Default 
+//colors: {
+//   primary: {
+//     light: '#8EDFFF',  // Add custom light primary color
+//     DEFAULT: '#0075A2', // Default primary color
+//     dark: '#00246B',    // Add custom dark primary color
+//   },

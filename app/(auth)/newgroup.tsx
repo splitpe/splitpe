@@ -25,18 +25,13 @@ AppState.addEventListener('change', (state) => {
   }
 })
 
-export default function SignUp() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+export default function CreateGroup() {
   const [fullname, setFullname] = useState('')
-  const [usernameExists, setUsernameExists] = useState(false);
   const [loading, setLoading] = useState(false)
-  const [phone, setPhone] = useState('')
-  const [countryCode, setCountryCode] = useState<string | null>('IN');
-  const [countryCallingCode, setCallingCountryCode] = useState<string | null>('+91');
-  const [currency, setCurrency] = useState(currencies[0]);
+  const [currency, setCurrency] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState('')
-  const phoneInput = useRef<PhoneInput>(null);
+  const { user } = useAuth();
+
 
 
 
@@ -49,67 +44,32 @@ export default function SignUp() {
 }
 
 
-  async function signUpWithEmail() {
+  async function CreateNewGroup() {
     setLoading(true)
-    if (isValidNumber(phone, countryCode) === false) {
-      Alert.alert("Error", "Please enter a valid phone number");
-      setLoading(false);
-      return;
-    }
 
-    const {
-      data,
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
+    const { data, error } = await supabase
+    .from('groups')  // Name of your table
+    .upsert({
+      id: user.id,  // Assuming 'id' is the user identifier in the profiles table
+      group_name: fullname,
+      avatar_url: avatarUrl,
+      currency: currency?.code,
+     
+    });
 
- 
-
-    if (error) Alert.alert(error.message)    
-    // console.log(data)
-    if (data.session) 
-    {
-      // console.log(data)
-      console.log(data.session.user.id)
-      // console.log(user.id)
-       // Proceed to update additional fields after successful signup
-        const userId = data.session?.user.id
-
-        await updateUserProfile(userId, fullname);
-    }
+  if (error) {
+    console.log("Error updating profile:", error.message);
+  } else {
+    console.log("Profile updated successfully", data);
+  }
       setLoading(false)
   }
 
 
-  const updateUserProfile = async (userId, fullname) => {
-
-    
-    const { data, error } = await supabase
-      .from('profiles')  // Name of your table
-      .upsert({
-        id: userId,  // Assuming 'id' is the user identifier in the profiles table
-        full_name: fullname,
-        avatar_url: avatarUrl,
-        phone_number: phone,
-        country_code: countryCode,
-        country_calling_code: countryCallingCode,
-        currency: currency?.code,
-        email: email
-      });
-  
-    if (error) {
-      console.log("Error updating profile:", error.message);
-    } else {
-      console.log("Profile updated successfully", data);
-    }
-  };
-  
 
 
 return (<View className="flex-1 justify-center bg-white px-6 py-4">
-  <Stack.Screen options={{ title: 'Sign Up' }}></Stack.Screen>
+  <Stack.Screen options={{ title: 'New Group' }}></Stack.Screen>
     <View className="flex-row items-center mb-4">
       <Image
         source={logoImage.image} 
@@ -119,11 +79,8 @@ return (<View className="flex-1 justify-center bg-white px-6 py-4">
       <Text className="text-4xl font-bold">Splitpe</Text>
     </View>
 
-    {/* <View className="w-36 h-36 rounded-full bg-gray-200 self-center mb-4" /> */}
 
-        <View
-    >
-    {/* <CameraButton status="Ready" /> */}
+        <View>
 
       <Avatar
         size={200}
@@ -141,42 +98,10 @@ return (<View className="flex-1 justify-center bg-white px-6 py-4">
       value={fullname}
       onChangeText={setFullname}
     />
-    <TextInput
-      placeholder="Your email address"
-      keyboardType="email-address"
-      className="border-b border-gray-300 py-2 mb-4"
-      editable={!loading}
-      value={email}
-      onChangeText={setEmail}
-    />
+    
 
-    <TextInput
-      placeholder="Your password"
-      secureTextEntry
-      className="border-b border-gray-300 py-2 mb-4"
-      editable={!loading}
-      value={password}
-      onChangeText={setPassword}
-    />
+    
 
-    <View className="flex-row mb-4 border-b border-gray-300 py-2">
-    <PhoneInput
-            ref={phoneInput}
-            defaultValue={phone}
-            defaultCode={CountryCodeList.includes(countryCode)? countryCode : undefined}
-            onChangeText={(text) => {
-              console.log(text);
-              setPhone(text);
-            }}
-            textContainerStyle={{ backgroundColor: 'transparent' }}
-            textInputStyle={{ backgroundColor: 'transparent',fontSize: 14 }}
-            onChangeCountry={(text) => {
-              console.log(text);
-              setCountryCode(CountryCodeList.includes(text.cca2)? text.cca2 : undefined);
-              setCallingCountryCode(text.callingCode[0]);
-            }}
-          />
-    </View>
 
     <CurrencyPicker selectedCurrency={currency} onSelectCurrency={setCurrency} />
 
@@ -185,8 +110,8 @@ return (<View className="flex-1 justify-center bg-white px-6 py-4">
         <Text className="text-xl">Back</Text>
       </TouchableOpacity>
       <TouchableOpacity className="bg-blue-500 py-2 px-6 rounded">
-        <Pressable onPress={() => signUpWithEmail()}>
-        <Text className="text-white text-xl">Sign Up</Text>
+        <Pressable onPress={() => CreateNewGroup()}>
+        <Text className="text-white text-xl">Create New Group</Text>
         </Pressable>
       </TouchableOpacity>
     </View>
