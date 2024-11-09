@@ -13,10 +13,7 @@ export default function UserSearchList(props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState(initialUsers);
   const [fullusers, setFullusers] = useState(initialUsers);
-  var group_id = props.group_id;
-  if (!group_id) {
-    group_id = 23;
-  }
+  var group_id = props.groupId;
   
 
   const generateSignedUrl = async (bucketName, fileName, expiresIn) => {

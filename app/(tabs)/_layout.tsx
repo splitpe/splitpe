@@ -9,6 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 
+
 export default function TabLayout() {
 
   const { isAuthenticated } = useAuth();

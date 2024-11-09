@@ -16,7 +16,9 @@ import { generateSignedUrl } from '~/helper/functions';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Entypo from '@expo/vector-icons/Entypo';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import { FloatingAction } from 'react-native-floating-action';
 
 
 
@@ -34,13 +36,11 @@ AppState.addEventListener('change', (state) => {
 })
 
 export default function CreateMember() {
-  const [Membername, setGoupName] = useState('')
-  const [Group, setGroup] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [currency, setCurrency] = useState(currencies[0]);
-  const [avatarUrl, setAvatarUrl] = useState('')
+  const [Group, setGroup] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [adminid,setAdminId] = useState(null);
+  const [adminItem,setAdminItem] = useState(null);
   const { user } = useAuth();
-
 
   const params = useLocalSearchParams();
   const groupId = params.id;
@@ -57,11 +57,15 @@ export default function CreateMember() {
         if (error) {
           console.error(error);
         } else {
-          const GroupSignedUrl = await generateSignedUrl('avatars', data.profile_picture_url, 3600);
+
+      if(data.profile_picture_url)    
+      {
+        const GroupSignedUrl = await generateSignedUrl('avatars', data.profile_picture_url, 3600);
 
       if (GroupSignedUrl) {
         data.profile_picture_url = GroupSignedUrl;
       }
+    }
       console.log("Date in fetch Group",data);
       setGroup(data);
         }
@@ -80,10 +84,10 @@ export default function CreateMember() {
   const [invitedMembers, setInvitedMembers] = useState<Member[]>([])
 
   useEffect(() => {
-    const fetchGroupMembers = async () => {
+    const fetchInvitedMembers = async () => {
       const { data, error } = await supabase
       .from('invitations')
-      .select('user_id, group_id,inviter_id,user:profiles!invitations_user_id_fkey(full_name,avatar_url)')
+      .select('id,user_id, group_id,inviter_id,user:profiles!invitations_user_id_fkey(full_name,avatar_url)')
       .eq('group_id', groupId)
       .eq('status', 'pending')
       if (error) {
@@ -107,24 +111,177 @@ export default function CreateMember() {
         }));
 
 
-        console.log('Invited Member in fetchGroupMembers',data);
+        console.log('Invited Member in fetchInvitedMembers',data);
         setInvitedMembers(updatedInvitedMembers);
+      }
+    }
+    fetchInvitedMembers();
+  }, [])
+
+
+  function EditGroup() {
+    // console.log("Edit Group",`/(group)/(members)/(crud)/updategroup?groupId=${groupId}`)
+    router.navigate(`/(group)/(members)/(crud)/updategroup?groupId=${groupId}`);
+  }
+
+  useEffect(() => {
+    const fetchGroupMembers = async () => {
+      const { data, error } = await supabase
+      .from('user_groups')
+      .select('id,user_id, group_id,role,user:profiles!user_groups_user_id_fkey(full_name,avatar_url)')
+      .eq('group_id', groupId)
+
+      if (error) {
+        console.error(error);
+      }
+      else {
+
+        const updatedGroupMembers = await Promise.all(data.map(async (item) => {
+          if(item.user_id === user.id){
+            setAdminId(item);
+          }
+
+          if (item.user.avatar_url) {
+           
+            const avatarSignedUrl = await generateSignedUrl('avatars', item.user.avatar_url, 3600);
+            return {
+              ...item,
+              user:{
+                ...item.user,
+                avatar_url: avatarSignedUrl,
+              }
+              
+            };
+          }
+          return item;
+        }));
+
+        console.log('The group ID',groupId)
+        console.log('Invited Member in fetchGroupMembers',updatedGroupMembers);
+        setGroupMembers(updatedGroupMembers);
       }
     }
     fetchGroupMembers();
   }, [])
 
+
+  async function deleteInvitedMember(id) {
+    const {data,error}= await supabase
+    .from('invitations')
+    .delete()
+    .eq('id', id)
+
+    if (error) {
+      console.error(error);
+    }
+    else {
+      setInvitedMembers(invitedMembers.filter((member) => member.id !== id));      
+    }
+  }
+
+  async function ExitGroup(id) {
+    deleteGroupMember(id);
+    router.navigate('/');
+  }
+
+ async function updateadmin(id, rolevalue) {
+  const {data,error}= await supabase
+  .from('user_groups')
+  .update({role:rolevalue})
+  .eq('id', id)
+  if (error) {
+    console.error(error);
+  }
+  else {
+    const updatedGroupMembers = groupMembers.map((member) => {
+      if (member.id === id) {
+        return { ...member, role: rolevalue };
+      }
+      return member;
+    });
+    setGroupMembers(updatedGroupMembers);
+
+  }
+ }
+
+  async function deleteGroupMember(id) {
+    const {data,error}= await supabase
+    .from('user_groups')
+    .delete()
+    .eq('id', id)
+
+    if (error) {
+      console.log(id);
+      console.error(error);
+    }
+    else {
+      const member=groupMembers.filter((member) => member.id === id);
+      const {data,error}= await supabase
+      .from('invitations')
+      .delete()
+      .eq('user_id', member[0].user_id)
+      .eq('group_id', member[0].group_id)
+      .eq('status', 'accepted')
+
+      if (error) {
+        console.log(error)
+      }
+      
+      setGroupMembers(groupMembers.filter((member) => member.id !== id));              
+      
+    }
+  }
+
+
+
   const renderMember = ({ item }: { item: Member }) => (
-    <View className="flex-row items-center mb-2 p-2 border border-gray-200 bg-white rounded-lg">
+    <View key={item.id} className="flex-row items-center mb-2 p-2 border border-gray-200 bg-white rounded-lg">
       {item.user.avatar_url ? (
         <Image className='w-10 h-10 rounded-full mr-4'
           source={{ uri: item.user.avatar_url }}></Image>
       ): (
-        <View className="w-10 h-10 rounded-full bg-blue-500 items-center justify-center mr-4">
+        <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-4">
       </View>
       )}
       <Text className="text-lg">{item.user?.full_name}</Text>
+      {adminid.role === 'admin' &&(
+
+      <View className="flex-row ml-auto gap-3 items-center"> 
+      {item.role === 'member' &&
+            (<TouchableOpacity className="ml-auto items-center" onPress={() => updateadmin(item.id,'admin')}>
+<MaterialCommunityIcons name="shield-account-variant" size={24} color={Colors.primary.DEFAULT} />
+            </TouchableOpacity>)}
+            {item.role === 'admin' &&
+            (<TouchableOpacity className="ml-auto items-center" onPress={() => updateadmin(item.id,'member')}>
+<MaterialCommunityIcons name="shield-remove" size={22} color={Colors.primary.DEFAULT} />
+            </TouchableOpacity>)}
+      <TouchableOpacity className="ml-auto" onPress={() => deleteGroupMember(item.id)}>
+
       <MaterialIcons className='ml-auto' name="delete-forever" size={24} color={Colors.primary.DEFAULT} />
+      </TouchableOpacity>
+      </View>
+)}
+    </View>
+  )
+
+
+
+  const renderInviteMember = ({ item }: { item: Member }) => (
+    <View key={item.id} className="flex-row items-center mb-2 p-2 border border-gray-200 bg-white rounded-lg">
+      {item.user.avatar_url ? (
+        <Image className='w-10 h-10 rounded-full mr-4'
+          source={{ uri: item.user.avatar_url }}></Image>
+      ): (
+        <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-4">
+      </View>
+      )}
+      <Text className="text-lg">{item.user?.full_name}</Text>
+      {adminid.role === 'admin' && 
+      <TouchableOpacity className="ml-auto" onPress={() => deleteInvitedMember(item.id)}>
+
+      <MaterialIcons className='ml-auto' name="delete-forever" size={24} color={Colors.primary.DEFAULT} />
+      </TouchableOpacity>
+}
     </View>
   )
 
@@ -142,11 +299,21 @@ return (<View className="flex-1 justify-center bg-white py-4">
       
       <ScrollView className="flex-1">
         <View className="items-center mb-6 gap-3">
+          <TouchableOpacity onPress={() => EditGroup()} className='flex-row items-center ml-auto'>
+          <Text className='text-lg text-primary'>Edit</Text>
+          <Entypo className='ml-auto p-5' name="edit" size={24} color={Colors.primary.DEFAULT} />
+          </TouchableOpacity>
+    {Group.profile_picture_url ? (
           <Image
-      source={{ uri: Group.profile_picture_url }}
-      className="w-36 h-36 rounded-full" />
-
-          <Text className="text-xl font-semibold">{Group.name}</Text>
+          source={{ uri: Group.profile_picture_url }}
+          className="w-36 h-36 rounded-full" />
+    ): (
+      <View className="w-36 h-36 rounded-full bg-gray-200" />
+    )
+    }
+      {Group.name && (
+        <Text className="text-3xl font-bold">{Group.name}</Text>
+      )}
         </View>
         
         <View className="px-4">
@@ -182,7 +349,7 @@ return (<View className="flex-1 justify-center bg-white py-4">
   {invitedMembers.length > 0 ? (
   invitedMembers.map((member, index) => (
     <View key={member.user_id} className="gap-1">
-      {renderMember({ item: member })}
+      {renderInviteMember({ item: member })}
     </View>
   ))): (
     <Text className="text-gray-500 bg-gray-100 rounded-lg my-2 text-center p-10">No invited members</Text>
@@ -190,8 +357,8 @@ return (<View className="flex-1 justify-center bg-white py-4">
 </View>
           
           
-          <TouchableOpacity className="flex-row mb-2 p-2 justify-center gap-5 items-center bg-red-500 rounded-lg">
-            <Text className="text-white text-lg">Leave list</Text>
+          <TouchableOpacity onPress={() => ExitGroup(adminid?.id)} className="flex-row mb-2 p-2 justify-center gap-5 items-center bg-red-500 rounded-lg">
+            <Text className="text-white text-lg">Exit Group</Text>
             <MaterialIcons name="exit-to-app" size={24} color="white" />
           </TouchableOpacity>
         </View>

@@ -5,11 +5,14 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        ubuntu : './assets/fonts/ubuntu.ttf',
+      },
       colors: {
         primary: {
           light: '#e9e1f4',  // Add custom light primary color
           DEFAULT: '#B57EDC', // Default primary color
-          dark: '#005271',    // Add custom dark primary color
+          dark: '#260f36',    // Add custom dark primary color
         },
         // primary: {
         //   light: '#e9e1f4',  // Add custom light primary color

@@ -8,18 +8,93 @@ import { Colors } from '~/types/colors';
 import { supabase } from '~/utils/supabase';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
+import ExpenseBlock from './ExpenseBlock';
+import { FloatingAction } from 'react-native-floating-action';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import BalanceDisplay from '~/components/BalanceDisplay';
+import BalancesComponent from './BalancesComponent';
+import GroupDetails from '~/app/(group)/[id]';
+import { useAuth } from '~/contexts/AuthProvider';
 
 
 export default function GroupScreen(props) {
   const [activeTab, setActiveTab] = useState('Expenses');
   const [modalVisible, setModalVisible] = useState(false);
   const [groupItem, setGroupItem] = useState(null);
+  const [expenses, setExpenses] = useState([]);
+  const { user } = useAuth();
+
  
   const logoFromFile = require('../assets/Logo.png');
 
   const copyToClipboard = async (text) => {
     await Clipboard.setStringAsync(text);
   };
+
+  const actions = [
+    {
+      text: "Group Creation",
+      icon: <MaterialCommunityIcons name="account-group" size={24} color="white" />,
+      name: "bt_group_creation",
+      position: 3,
+      color: '#2EC7AB',
+      buttonSize:50,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    {
+      text: "New Transaction",
+      icon: <FontAwesome name="credit-card" size={24} color="white" />,
+      name: "bt_accessibility",
+      position: 2,
+      color: '#EA638C',
+      buttonSize:50,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+    {
+      text: "Scan Group QR Code",
+      icon: <MaterialCommunityIcons name="qrcode-scan" size={24} color="white" />,
+      name: "bt_qr_code",
+      position: 1,
+      color: '#257180',
+      buttonSize:50,
+      textStyle: {
+        fontSize: 16,
+      },
+    },
+  
+  ];
+  
+
+
+
+useEffect(() => {
+  async function getExpenses(groupId: string) {
+    const { data, error } = await supabase
+      .from('expenses')
+      .select('id')
+      .eq('group_id', groupId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error(error);
+      setExpenses([]); 
+    } else {
+      setExpenses(data);
+    }
+  }
+
+  // Use the groupId to fetch the group data  
+  getExpenses(props.id);
+}, []);
+
+
+
+
+
 
   useEffect(() => {
     setActiveTab('Expenses');
@@ -35,12 +110,14 @@ export default function GroupScreen(props) {
         setGroupItem(null);
       }
     
-      
+    if(data.profile_picture_url)      
+    {
       const GroupSignedUrl = await generateSignedUrl('avatars', data.profile_picture_url, 3600);
 
       if (GroupSignedUrl) {
         data.profile_picture_url = GroupSignedUrl;
       }
+    }
       setGroupItem(data);
     }
 
@@ -74,11 +151,14 @@ export default function GroupScreen(props) {
     </View>
         <View className="flex-1">
           <View className="flex-row items-center justify-center gap-2 bg-primary-light rounded-full py-1 px-1 mb-2 z-10">
-            <View className="w-16 h-16 rounded-full bg-white mr-2 z-0" >
+            <View className="w-16 h-16 rounded-full justify-center items-center bg-white mr-2 z-0" >
+             {groupItem.profile_picture_url ? (
               <Image
                 source={{ uri: groupItem.profile_picture_url }}
                 className="w-14 h-14 rounded-full"
-              />
+              />) : (
+                <View className="w-14 h-14 rounded-full bg-grey-200 relative z-10" />
+              )}
             </View>
             <Text className="flex-1 bg-primary-light rounded-r-full font-bold text-primary">{groupItem.name}</Text>
           </View>
@@ -113,61 +193,74 @@ export default function GroupScreen(props) {
 
       <ScrollView className="flex-1 bg-white">
         {activeTab === 'Expenses' ? (
-          <View className="bg-white rounded-xl m-4 p-4 shadow-lg">
-            <View className="flex-row items-center mb-4">
-              <View className="w-16 h-16 rounded-full border-2 border-gray-300 mr-3" />
-              <Text className="flex-1 text-lg font-bold">Manali tour</Text>
-              <Text className="text-lg font-bold">₹ 1800</Text>
-            </View>
-            <Text className="text-gray-500 mb-2">Paid by</Text>
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
-              <Text className="flex-1">Sunny</Text>
-              <Text className="font-bold">₹ 1440</Text>
-            </View>
-            <Text className="text-gray-500 mb-2">UnPaid bill</Text>
-            {['Eric', 'Jhon', 'Luther', 'Raju'].map((name) => (
-              <View key={name} className="flex-row items-center mb-2">
-                <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
-                <Text className="flex-1">{name}</Text>
-                <Text className="text-gray-500">₹ 360</Text>
-              </View>
-            ))}
+          // <View className="bg-white rounded-xl m-4 p-4 shadow-lg">
+          //   <View className="flex-row items-center mb-4">
+          //     <View className="w-16 h-16 rounded-full border-2 border-gray-300 mr-3" />
+          //     <Text className="flex-1 text-lg font-bold">Manali tour</Text>
+          //     <Text className="text-lg font-bold">₹ 1800</Text>
+          //   </View>
+          //   <Text className="text-gray-500 mb-2">Paid by</Text>
+          //   <View className="flex-row items-center mb-4">
+          //     <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
+          //     <Text className="flex-1">Sunny</Text>
+          //     <Text className="font-bold">₹ 1440</Text>
+          //   </View>
+          //   <Text className="text-gray-500 mb-2">UnPaid bill</Text>
+          //   {['Eric', 'Jhon', 'Luther', 'Raju'].map((name) => (
+          //     <View key={name} className="flex-row items-center mb-2">
+          //       <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
+          //       <Text className="flex-1">{name}</Text>
+          //       <Text className="text-gray-500">₹ 360</Text>
+          //     </View>
+          //   ))}
+          // </View>
+          (expenses.length > 0 ?
+        expenses.map((expense) => (
+          console.log("In Group Details", expense),
+          <ExpenseBlock key={expense.id} id={expense.id} />
+        ))
+        : (
+          <View className="flex-1 justify-center items-center p-5">
+            <Text className="text-lg text-gray-500">No Expenses Found</Text>
           </View>
+        ))
+
+
         ) : (
-          <View className="bg-white rounded-xl m-4 p-4 shadow-md">
-            <View className="mb-4">
-              <View className="flex-row justify-between mb-2">
-                <Text className="text-lg">You get</Text>
-                <Text className="text-lg font-bold text-green-500">₹ 1440</Text>
-              </View>
-              <View className="flex-row justify-between">
-                <Text className="text-lg">You owed</Text>
-                <Text className="text-lg font-bold text-red-500">-₹ 350</Text>
-              </View>
-            </View>
-            <Text className="text-gray-500 mb-2">Balances</Text>
-            {[
-              { name: 'Eric', amount: 360, color: 'text-green-500' },
-              { name: 'Jhon', amount: -360, color: 'text-red-500' },
-              { name: 'Luther', amount: -360, color: 'text-red-500' },
-              { name: 'Raju', amount: 360, color: 'text-green-500' },
-            ].map(({ name, amount, color }) => (
-              <View key={name} className="flex-row items-center mb-2">
-                <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
-                <Text className="flex-1">{name}</Text>
-                <Text className={`font-bold ${color}`}>
-                  {amount > 0 ? '₹ ' : '-₹ '}{Math.abs(amount)}
-                </Text>
-              </View>
-            ))}
-          </View>
+          // <View className="bg-white rounded-xl m-4 p-4 shadow-md">
+          //   <View className="mb-4">
+          //     <View className="flex-row justify-between mb-2">
+          //       <Text className="text-lg">You get</Text>
+          //       <Text className="text-lg font-bold text-green-500">₹ 1440</Text>
+          //     </View>
+          //     <View className="flex-row justify-between">
+          //       <Text className="text-lg">You owed</Text>
+          //       <Text className="text-lg font-bold text-red-500">-₹ 350</Text>
+          //     </View>
+          //   </View>
+          //   <Text className="text-gray-500 mb-2">Balances</Text>
+          //   {[
+          //     { name: 'Eric', amount: 360, color: 'text-green-500' },
+          //     { name: 'Jhon', amount: -360, color: 'text-red-500' },
+          //     { name: 'Luther', amount: -360, color: 'text-red-500' },
+          //     { name: 'Raju', amount: 360, color: 'text-green-500' },
+          //   ].map(({ name, amount, color }) => (
+          //     <View key={name} className="flex-row items-center mb-2">
+          //       <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
+          //       <Text className="flex-1">{name}</Text>
+          //       <Text className={`font-bold ${color}`}>
+          //         {amount > 0 ? '₹ ' : '-₹ '}{Math.abs(amount)}
+          //       </Text>
+          //     </View>
+          //   ))}
+          // </View>
+//          <BalanceDisplay groupId={groupItem.id}></BalanceDisplay>
+<BalancesComponent groupId={groupItem.id} user={user} />
         )}
+
       </ScrollView>
 
-      <TouchableOpacity className="absolute right-4 bottom-4 w-14 h-14 rounded-full bg-blue-900 justify-center items-center">
-        <Text className="text-white text-3xl">+</Text>
-      </TouchableOpacity>
+
     </View>
   ):(<View className='flex-1 justify-center items-center'>
     <ActivityIndicator color={Colors.primary.DEFAULT} size={'large'}></ActivityIndicator>

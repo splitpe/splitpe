@@ -71,8 +71,51 @@ export default function CreateGroup() {
       Alert.alert("Error creating the group:", error.message);
     } else {
       console.log('Data:', data);
+      const { data2, error } = await supabase
+      .from('user_groups')
+      .insert([{
+        user_id: user.id,
+        group_id: data.id,
+        role: 'admin'
+      }])
+      .select()
+      if(error)
+      {
+          console.log('Error is ',error)
+      }
+      else
+      {
+  
+        const { data3, error } = await supabase
+        .from('invitations')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('group_id', data.id)
+        .single();
+      
+      if (data3 && data3.id) {
+        // update existing record
+        const { data: updateData, error: updateError } = await supabase
+          .from('invitations')
+          .update({
+            status: 'accepted',
+          })
+          .eq('id', data3.id);
+      } else {
+        // insert new record
+        const { data: insertData, error: insertError } = await supabase
+          .from('invitations')
+          .insert({
+            user_id: user.id,
+            group_id: data.id,
+            status: 'accepted',
+          });
+        }
+
+
       Alert.alert("New Group Created", `Group ${groupname} created successfully!`);
       router.navigate(`/(group)/${data.id}`);
+      }
     }
   }
 

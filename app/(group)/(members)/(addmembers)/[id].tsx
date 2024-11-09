@@ -15,7 +15,7 @@ export default function Home() {
       {/* <Container>
         <ScreenContent path="app/(drawer)/(tabs)/theme.tsx" title="Theme" />
       </Container> */}
-      <Text>{groupId}</Text>
+
       <UserSearchList groupId={groupId}></UserSearchList>
     </>
  
