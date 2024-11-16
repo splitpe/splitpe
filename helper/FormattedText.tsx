@@ -16,10 +16,10 @@ export default function AmountDisplay({ amount,className }) {
   
   const formattedAmount = formatAmount(amount);
   if (className) {
-    return <Text className={className}>{formattedAmount}</Text>;
+    return <Text className= {className}>{formattedAmount}</Text>;
   }
 
-  const colorClass = amount < 0 ? 'text-red-500 text-xs' : 'text-green-500 text-xs';
+  const colorClass = amount < 0 ? 'text-red-500 text-xs font-interBold' : 'text-green-500 text-xs font-sans';
 
   return (
     <Text className={`${colorClass} font-bold`}>{formattedAmount}</Text>

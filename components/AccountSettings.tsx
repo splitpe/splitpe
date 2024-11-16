@@ -147,11 +147,11 @@ getProfile()
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
           
-          <TouchableOpacity className="flex-row items-center p-4">
+          <TouchableOpacity className="flex-row items-center p-4" onPress={() => {router.push('/(group)/(members)/(crud)/changepassword')}}>
             <View className="bg-green-100 p-2 rounded-lg">
               <Lock size={20} color="#16a34a" />
             </View>
-            <Text className="flex-1 ml-3 text-gray-700 font-medium">Security</Text>
+            <Text className="flex-1 ml-3 text-gray-700 font-medium">Password Reset</Text>
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
         </View>

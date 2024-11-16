@@ -68,21 +68,21 @@ export default function Auth() {
 
   return (
 
-    <View className='flex-1 justify-center items-center gap-4'>
+    <View className='flex-1 bg-white justify-center items-center gap-4'>
         <Stack.Screen options={{ title: 'Login' }}></Stack.Screen>
         <Image source={logoImage.image} className='w-64 h-60 mb-5'></Image>
       <View className='w-5/6'>
      
-        <TextInput className='bg-primary-light p-4  text-black rounded-lg'
+        <TextInput className='bg-cgray-one font-sans p-5  text-black rounded-lg'
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
           autoCapitalize={'none'}
         />
       </View>
-      <View  className='w-4/5'>
+      <View  className='w-5/6'>
         <TextInput
-        className='bg-primary-light p-4  text-black rounded-lg'
+        className='bg-cgray-one font-sans p-5 text-black rounded-lg'
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry={true}
@@ -93,11 +93,11 @@ export default function Auth() {
       </View>
       
       <View className='w-4/5 gap-4 flex-row justify-between'>
-      <Pressable className= 'bg-white px-10 p-4 rounded-lg' onPress={() => router.navigate('/(auth)/signup')    }>
-        <Text disabled={loading} >Sign Up</Text>
+      <Pressable className= 'bg-cgray-one px-10 p-4 rounded-lg' onPress={() => router.navigate('/(auth)/signup')    }>
+        <Text className='font-poppins' disabled={loading} >Sign Up</Text>
       </Pressable>
       <Pressable className='bg-primary px-10 rounded-lg'  onPress={() => signInWithEmail()}>
-        <Text className=' p-4  text-white' disabled={loading} >Sign in</Text>
+        <Text className=' p-4 font-poppins  text-white' disabled={loading} >Sign in</Text>
       </Pressable>
      
 

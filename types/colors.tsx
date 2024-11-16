@@ -1,7 +1,7 @@
 export const Colors = {
     primary: {
-        light: '#e9e1f4',  // Add custom light primary color
-        DEFAULT: '#B57EDC', // Default primary color
+        light: '#fcf1ff',//'#e9e1f4',  // Add custom light primary color
+        DEFAULT: '#bd00eb', //'#B57EDC', // Default primary color
         dark: '#5b2383',    // Add custom dark primary color
       },
       secondary: {

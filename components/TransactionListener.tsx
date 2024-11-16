@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, Switch, Animated } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Switch, Animated, Alert } from 'react-native'
 import { PlusCircle, XCircle, AlertCircle } from 'lucide-react-native'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
@@ -51,7 +51,26 @@ export default function TransactionListener() {
   }
 
   function clearMessages() {
-    setMessages([])
+    Alert.alert(
+      'Confirm Deletion of Messages',
+      'Are you sure you want to delete all the messages?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress:   
+     () => {
+            // Perform deletion action
+            console.log('Item deleted');
+            setMessages([]);
+          },
+        },
+      ]
+    );
   }
 
   const handleAddTransaction = (message: Message) => {
@@ -71,7 +90,7 @@ export default function TransactionListener() {
         <View>
           <Text className="text-lg font-semibold text-gray-900">Transaction Listener</Text>
           <Text className="text-sm text-gray-500">{messages.length} messages</Text>
-          <TouchableOpacity onPress={() => clearMessages()}><Text className="text-sm text-red-500">Clear Messages</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => clearMessages()}><Text className="text-sm text-red-500">Clear All Messages</Text></TouchableOpacity>
         </View>
         <View className="flex-row items-center space-x-2">
         

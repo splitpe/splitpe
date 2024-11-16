@@ -7,12 +7,25 @@ import GroupScreen from '~/components/groupdetails';
 import { supabase } from '~/utils/supabase';
 import { router } from 'expo-router';
 import { Colors } from '~/types/colors';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 
 export default function GroupDetails() {
     const params = useLocalSearchParams();
     const groupId = params.id;
     const actions = [
+      {
+        text: "Add User",
+        icon:<AntDesign name="adduser" size={24} color="white" />,
+        name: "bt_add_user",
+        position: 4,
+        color: '#2EC7AB',
+        buttonSize:50,
+        textStyle: {
+          fontSize: 16,
+        },
+      },
+
       {
         text: "Group Creation",
         icon: <MaterialCommunityIcons name="account-group" size={24} color="white" />,
@@ -68,6 +81,9 @@ export default function GroupDetails() {
       }
       else if(name == "bt_qr_code"){
         router.navigate('/(group)/scanaddgroup')
+      }
+      else if(name == "bt_add_user"){
+        router.navigate(`/(group)/(members)/${groupId}`)
       }
     }}
     color={Colors.primary.DEFAULT}

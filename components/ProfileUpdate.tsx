@@ -20,6 +20,7 @@ export default function ProfileUpdate() {
   const [currency, setCurrency] = useState(currencies[0])
   const [avatarUrl, setAvatarUrl] = useState('')
   const phoneInput = useRef<PhoneInput>(null)
+  const [isDataLoaded, setIsDataLoaded] = useState(false)
 
   const logoImage = {
     image: require("../assets/Logo4.png"),
@@ -30,8 +31,11 @@ export default function ProfileUpdate() {
 
   // Fetch current user data on component mount
   useEffect(() => {
-    fetchUserProfile()
+    fetchUserProfile().then(() => {
+      setIsDataLoaded(true)
+    })
   }, [])
+
 
   const fetchUserProfile = async () => {
     try {
@@ -64,6 +68,7 @@ export default function ProfileUpdate() {
         if (savedCurrency) {
           setCurrency(savedCurrency)
         }
+        setIsDataLoaded(true)
       }
     } catch (error) {
       Alert.alert('Error', 'Error fetching profile')
@@ -157,9 +162,11 @@ export default function ProfileUpdate() {
       />
 
       <View className="flex-row mb-4 border-b border-gray-300 py-2">
+      {isDataLoaded && (
         <PhoneInput
           ref={phoneInput}
           defaultValue={phone}
+//          value={phone}
           defaultCode={CountryCodeList.includes(countryCode) ? countryCode : undefined}
           onChangeText={(text) => {
             setPhone(text)
@@ -170,7 +177,8 @@ export default function ProfileUpdate() {
             setCountryCode(CountryCodeList.includes(text.cca2) ? text.cca2 : undefined)
             setCallingCountryCode(text.callingCode[0])
           }}
-        />
+        />)
+}
       </View>
 
       <CurrencyPicker selectedCurrency={currency} onSelectCurrency={setCurrency} />

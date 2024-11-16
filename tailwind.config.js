@@ -6,13 +6,22 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        ubuntu : './assets/fonts/ubuntu.ttf',
+        sans: ["Poppins", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"], // Set Poppins as the default sans font
+        inter: ["Inter", "sans-serif"],
+        interBlack: ["InterBlack", "sans-serif"],
+        interBold: ["InterBold", "sans-serif"],
+        poppinsBold: ["PoppinsBold", "sans-serif"],
+        narnoor: ["Narnoor", "sans-serif"],
+        narnoorBold: ["NarnoorBold", "sans-serif"],
       },
       colors: {
         primary: {
-          light: '#e9e1f4',  // Add custom light primary color
-          DEFAULT: '#B57EDC', // Default primary color
-          dark: '#260f36',    // Add custom dark primary color
+          light: '#fcf1ff',  // Add custom light primary color
+          DEFAULT:'#bd00eb',//'#B57EDC', //'#8b5cf6', //'#B57EDC', // Default primary color
+          dark: '#5b2383',//'#260f36',    // Add custom dark primary color
+          border: '#f0b2ff',
+          tabs: '#f7d6ff',
         },
         // primary: {
         //   light: '#e9e1f4',  // Add custom light primary color
@@ -25,6 +34,11 @@ module.exports = {
           light: '#EDEDED',  // Add custom secondary light color
           DEFAULT: '#6C6C6C', // Default secondary color
           dark: '#595959',    // Add custom secondary dark color
+        },
+        cgray:{
+          one: '#EDEDED',  // Add custom secondary light color
+          two: '#6C6C6C', // Default secondary color
+          three: '#595959',    // Add custom secondary dark color
         },
         customGray: '#CBD5E0', // Example single custom color
       },

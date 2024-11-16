@@ -169,7 +169,7 @@ return (
  
     <View className="flex-1 mt-1">
 <View className="flex-row justify-center">
-<View className="min-h-24 w-16 h-full bg-primary justify-center gap-3 items-center rounded-br-lg rounded-bl-lg rounded-tr-lg">
+<View className="h-24 w-16 h-full bg-primary justify-center gap-3 items-center rounded-br-lg rounded-bl-lg rounded-tr-lg">
   { async function name(params:type) {
     userbalance
   }.length > 0 ? 
@@ -187,24 +187,33 @@ return (
   
 </View>
 
-<View className="flex-1 ml-4">
-              <View className="flex-row flex-wrap gap-2 ">
+<View className="flex-1 ml-2">
+              <View className="flex-row flex-wrap gap-2">
                 {balances.length > 0 ?
                 (
+                  
                   balances.map((balance, index) => (
-                    <View key={index} className="w-1/3 p-2  border border-gray-200 bg-white rounded-full">
+                    <View key={index} className="w-[30%] flex-grow-0 flex-shrink-0 p-2 border border-gray-200 bg-white rounded-full">
                       <View className="flex-row items-center">
                         {balance?.avatarUrl ? (
-                          <Image source={{ uri: balance?.avatarUrl }} className="w-6 h-6 rounded-full mr-2" />
+                          <Image source={{ uri: balance?.avatarUrl }} className="w-6 h-6 rounded-full" />
                         ) : (
-                          <View className="w-6 h-6 rounded-full bg-gray-200 mr-2" />
+                          <View className="w-6 h-6 rounded-full bg-gray-200" />
                         )}
                         <View className="flex-1 h-6  rounded-full items-center justify-center">
                           <AmountDisplay amount={balance?.amount} className="" />
                         </View>
                       </View>
                     </View>
-                  ))
+                  )
+
+                  
+
+                
+                
+                
+                )
+                  
                   
                 ):(
                   <View className="flex-1 min-h-24 border items-center justify-center border-gray-200 bg-white rounded-xl">

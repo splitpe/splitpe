@@ -11,7 +11,7 @@ import { supabase } from '~/utils/supabase';
 import { useAuth } from '~/contexts/AuthProvider';
 import { generateSignedUrl } from '~/helper/functions';
 import CustomStackScreen from '~/components/CustomStackScreen';
-import { useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
+import { router, useGlobalSearchParams, useLocalSearchParams } from 'expo-router';
 
 
 
@@ -365,6 +365,7 @@ if (totalPayerAmount !== totalAmount) {
       setDescription('');
       setPayers([]);
       setSplits([]);
+      router.back();
     } catch (error) {
       console.error(error);
       Alert.alert('Error adding expense');

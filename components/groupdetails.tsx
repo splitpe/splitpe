@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  View,Text, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import {  View,Text, ScrollView, TouchableOpacity, Image, ActivityIndicator, Alert, RefreshControl } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import QRCode from 'react-native-qrcode-svg';
 import QRCodeModal from '~/components/QRCodeModal';
@@ -9,11 +9,7 @@ import { supabase } from '~/utils/supabase';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import ExpenseBlock from './ExpenseBlock';
-import { FloatingAction } from 'react-native-floating-action';
-import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import BalanceDisplay from '~/components/BalanceDisplay';
 import BalancesComponent from './BalancesComponent';
-import GroupDetails from '~/app/(group)/[id]';
 import { useAuth } from '~/contexts/AuthProvider';
 
 
@@ -22,6 +18,7 @@ export default function GroupScreen(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [groupItem, setGroupItem] = useState(null);
   const [expenses, setExpenses] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
 
  
@@ -31,47 +28,15 @@ export default function GroupScreen(props) {
     await Clipboard.setStringAsync(text);
   };
 
-  const actions = [
-    {
-      text: "Group Creation",
-      icon: <MaterialCommunityIcons name="account-group" size={24} color="white" />,
-      name: "bt_group_creation",
-      position: 3,
-      color: '#2EC7AB',
-      buttonSize:50,
-      textStyle: {
-        fontSize: 16,
-      },
-    },
-    {
-      text: "New Transaction",
-      icon: <FontAwesome name="credit-card" size={24} color="white" />,
-      name: "bt_accessibility",
-      position: 2,
-      color: '#EA638C',
-      buttonSize:50,
-      textStyle: {
-        fontSize: 16,
-      },
-    },
-    {
-      text: "Scan Group QR Code",
-      icon: <MaterialCommunityIcons name="qrcode-scan" size={24} color="white" />,
-      name: "bt_qr_code",
-      position: 1,
-      color: '#257180',
-      buttonSize:50,
-      textStyle: {
-        fontSize: 16,
-      },
-    },
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await getExpenses(props.id); // Call the function to fetch the expenses
+    setRefreshing(false);
+  };
   
-  ];
   
 
-
-
-useEffect(() => {
   async function getExpenses(groupId: string) {
     const { data, error } = await supabase
       .from('expenses')
@@ -87,6 +52,10 @@ useEffect(() => {
     }
   }
 
+
+
+
+useEffect(() => {
   // Use the groupId to fetch the group data  
   getExpenses(props.id);
 }, []);
@@ -101,7 +70,7 @@ useEffect(() => {
     async function getGroupDetails(groupId: string) {
       const { data, error } = await supabase
         .from('groups')
-        .select('id, name, profile_picture_url, currency, new_id,created_at,created_by')
+        .select('id, name, profile_picture_url, currency, new_id,created_at,created_by:profiles!groups_created_by_fkey(id,full_name)')
         .eq('id', groupId)
         .single();
     
@@ -163,7 +132,7 @@ useEffect(() => {
             <Text className="flex-1 bg-primary-light rounded-r-full font-bold text-primary">{groupItem.name}</Text>
           </View>
           <View className='pb-4 px-8 '>
-          <Text className="text-white mb-1">Created by You</Text>
+          <Text className="text-white mb-1">Created by {user.id==groupItem.created_by.id? "You":groupItem.created_by.full_name}</Text>
           <Text className="text-white mb-1">{new Date(groupItem.created_at).toLocaleString()}</Text>
           <TouchableOpacity className='text-white flex-row items-center  gap-2' onPress={() => copyToClipboard(groupItem.new_id)}>
                <Text className='text-white'>Team ID:{groupItem.new_id}</Text>
@@ -176,11 +145,11 @@ useEffect(() => {
       </View>
 
       <View className=" bg-white rounded-t-3xl">
-  <View className='flex-row justify-center m-3  items-center rounded-full shadow-xl bg-gray-100 mt-3'>
+  <View className='flex-row justify-center m-3  items-center rounded-full border border-gray-200 bg-gray-100 mt-3'>
     {['Expenses', 'Balances'].map((tab) => (
       <TouchableOpacity
         key={tab}
-        className={`flex-1 py-3 rounded-full items-center ${activeTab === tab ? 'bg-primary-light text-white rounded-full' : ''}`}
+        className={`flex-1 py-3 rounded-full items-center ${activeTab === tab ? 'bg-primary-tabs text-white rounded-full' : ''}`}
         onPress={() => setActiveTab(tab)}
       >
         <Text className={`font-bold ${activeTab === tab ? 'text-primary' : 'text-gray-500'}`}>
@@ -191,7 +160,10 @@ useEffect(() => {
   </View>
 </View>
 
-      <ScrollView className="flex-1 bg-white">
+      <ScrollView className="flex-1 bg-white" 
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+      }>
         {activeTab === 'Expenses' ? (
           // <View className="bg-white rounded-xl m-4 p-4 shadow-lg">
           //   <View className="flex-row items-center mb-4">
@@ -216,8 +188,8 @@ useEffect(() => {
           // </View>
           (expenses.length > 0 ?
         expenses.map((expense) => (
-          console.log("In Group Details", expense),
-          <ExpenseBlock key={expense.id} id={expense.id} />
+                   
+          <ExpenseBlock key={expense.id} id={expense.id} groupID={groupItem.id} expense={expense} />
         ))
         : (
           <View className="flex-1 justify-center items-center p-5">

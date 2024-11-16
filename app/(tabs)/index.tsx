@@ -167,6 +167,7 @@ const actions = [
         <FlatList className="flex-1 bg-gray-100  mt-10 rounded-t-3xl px-4 pt-4"
         data={groups}
         keyExtractor={(item) => item.id.toString()} // Adjust depending on the table's unique key
+        key={`${(item) => item.id.toString()}-${refreshing}`}
         renderItem={({ item }) => (
           <GroupItem group={item} index={item.id}></GroupItem>
         )}
@@ -175,7 +176,7 @@ const actions = [
         }
         ListEmptyComponent={
           <View className="flex-1 items-center mt-auto bg-primary-light p-5 m-6 rounded-xl mb-auto">
-            <Text className="text-primary-dark text-lg font-bold">NO TEAMS FOUND!</Text>
+            <Text className="text-primary-dark text-lg font-poppinsBold">NO TEAMS FOUND!</Text>
           </View>
         }
       />
