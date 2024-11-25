@@ -17,6 +17,7 @@ expo-env.d.ts
 %ProgramData%
 ios
 android
+android2
 
 # macOS
 .DS_Store

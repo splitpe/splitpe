@@ -119,8 +119,8 @@ useEffect(() => {
 
     </View>
         <View className="flex-1">
-          <View className="flex-row items-center justify-center gap-2 bg-primary-light rounded-full py-1 px-1 mb-2 z-10">
-            <View className="w-16 h-16 rounded-full justify-center items-center bg-white mr-2 z-0" >
+          <View className="flex-row items-center justify-center bg-white rounded-2xl py-2 px-1 mb-2 z-10">
+            <View className="w-16 h-16 rounded-full justify-center items-center bg-white z-0" >
              {groupItem.profile_picture_url ? (
               <Image
                 source={{ uri: groupItem.profile_picture_url }}
@@ -129,13 +129,15 @@ useEffect(() => {
                 <View className="w-14 h-14 rounded-full bg-grey-200 relative z-10" />
               )}
             </View>
-            <Text className="flex-1 bg-primary-light rounded-r-full font-bold text-primary">{groupItem.name}</Text>
+            <View className='flex-1 bg-primary-tabs shadow-md items-center p-3 rounded-3xl mx-2'>
+            <Text className="font-interBold text-lg text-primary-dark">{groupItem.name}</Text>
+            </View>
           </View>
           <View className='pb-4 px-8 '>
-          <Text className="text-white mb-1">Created by {user.id==groupItem.created_by.id? "You":groupItem.created_by.full_name}</Text>
-          <Text className="text-white mb-1">{new Date(groupItem.created_at).toLocaleString()}</Text>
+          <Text className="text-white font-inter mb-1">Created by {user.id==groupItem.created_by.id? "You":groupItem.created_by.full_name}</Text>
+          <Text className="text-white font-inter mb-1">{new Date(groupItem.created_at).toLocaleString()}</Text>
           <TouchableOpacity className='text-white flex-row items-center  gap-2' onPress={() => copyToClipboard(groupItem.new_id)}>
-               <Text className='text-white'>Team ID:{groupItem.new_id}</Text>
+               <Text className='text-white font-inter'>Team ID:{groupItem.new_id}</Text>
                <Ionicons name="copy" size={20} color="white" />
           </TouchableOpacity>
           </View>
@@ -152,7 +154,7 @@ useEffect(() => {
         className={`flex-1 py-3 rounded-full items-center ${activeTab === tab ? 'bg-primary-tabs text-white rounded-full' : ''}`}
         onPress={() => setActiveTab(tab)}
       >
-        <Text className={`font-bold ${activeTab === tab ? 'text-primary' : 'text-gray-500'}`}>
+        <Text className={`font-poppinsBold ${activeTab === tab ? 'text-primary' : 'text-gray-500'}`}>
           {tab}
         </Text>
       </TouchableOpacity>

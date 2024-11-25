@@ -243,15 +243,15 @@ export default function CreateMember() {
         <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-4">
       </View>
       )}
-      <Text className="text-lg">{item.user?.full_name}</Text>
-      {adminid.role === 'admin' &&(
+      <Text className="font-poppins opacity-60 text-lg">{item.user?.full_name}</Text>
+      {adminid?.role === 'admin' &&(
 
       <View className="flex-row ml-auto gap-3 items-center"> 
-      {item.role === 'member' &&
+      {item?.role === 'member' &&
             (<TouchableOpacity className="ml-auto items-center" onPress={() => updateadmin(item.id,'admin')}>
 <MaterialCommunityIcons name="shield-account-variant" size={24} color={Colors.primary.DEFAULT} />
             </TouchableOpacity>)}
-            {item.role === 'admin' &&
+            {item?.role === 'admin' &&
             (<TouchableOpacity className="ml-auto items-center" onPress={() => updateadmin(item.id,'member')}>
 <MaterialCommunityIcons name="shield-remove" size={22} color={Colors.primary.DEFAULT} />
             </TouchableOpacity>)}
@@ -275,8 +275,8 @@ export default function CreateMember() {
         <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center mr-4">
       </View>
       )}
-      <Text className="text-lg">{item.user?.full_name}</Text>
-      {adminid.role === 'admin' && 
+      <Text className="font-poppins opacity-60 text-lg">{item.user?.full_name}</Text>
+      {adminid?.role === 'admin' && 
       <TouchableOpacity className="ml-auto" onPress={() => deleteInvitedMember(item.id)}>
 
       <MaterialIcons className='ml-auto' name="delete-forever" size={24} color={Colors.primary.DEFAULT} />
@@ -299,10 +299,10 @@ return (<View className="flex-1 justify-center bg-white py-4">
       
       <ScrollView className="flex-1">
         <View className="items-center mb-6 gap-3">
-          <TouchableOpacity onPress={() => EditGroup()} className='flex-row items-center ml-auto'>
+          {/* <TouchableOpacity onPress={() => EditGroup()} className='flex-row bg-blue-400 p-2 rounded-xl items-center mr-4 ml-auto'>
           <Text className='text-lg text-primary'>Edit</Text>
-          <Entypo className='ml-auto p-5' name="edit" size={24} color={Colors.primary.DEFAULT} />
-          </TouchableOpacity>
+          <Entypo className='ml-auto' name="edit" size={24} color={Colors.primary.DEFAULT} />
+          </TouchableOpacity> */}
     {Group.profile_picture_url ? (
           <Image
           source={{ uri: Group.profile_picture_url }}
@@ -312,22 +312,27 @@ return (<View className="flex-1 justify-center bg-white py-4">
     )
     }
       {Group.name && (
-        <Text className="text-3xl font-bold">{Group.name}</Text>
+        <View className='flex-row gap-3'>
+        <Text className="font-interBold text-primary-dark text-3xl">{Group.name}</Text>
+        <TouchableOpacity onPress={() => EditGroup()} className='flex-row rounded-xl items-center'>
+        <Entypo className='ml-auto' name="edit" size={24} color={Colors.primary.DEFAULT} />
+        </TouchableOpacity>
+        </View>
       )}
         </View>
         
         <View className="px-4">
           <TouchableOpacity className="flex-row justify-between items-center bg-white rounded-lg p-4 mb-4">
-            <Text className="text-lg">Currency</Text>
+            <Text className="text-lg font-poppins">Currency</Text>
             <View className="flex-row items-center">
-              <Text className="text-lg text-gray-500 mr-2">{Group.currency}</Text>
-              <Text className="text-lg text-gray-500">{currencies.find((c) => c.code === Group.currency)?.symbol}</Text>
+              <Text className="text-lg font-poppins text-gray-500 mr-2">{Group.currency}</Text>
+              <Text className="text-lg font-poppins text-gray-500">{currencies.find((c) => c.code === Group.currency)?.symbol}</Text>
             </View>
           </TouchableOpacity>
         
           
           <View className="p-2">
-  <Text className="text-2xl font-bold mb-4">Group Members</Text>
+  <Text className="text-2xl font-interBold mb-4">Group Members</Text>
   <TouchableOpacity
     onPress={() => router.navigate('/(group)/(members)/(addmembers)/'+groupId)}
     className="flex-row items-center mb-1 p-2 bg-green-500 rounded-lg"
@@ -345,14 +350,14 @@ return (<View className="flex-1 justify-center bg-white py-4">
   ): (
     <Text className="text-gray-500 bg-gray-100 rounded-lg my-2 text-center p-10">No members</Text>
   )}
-  <Text className="text-2xl font-bold mt-6 mb-4">Invited Members</Text>
+  <Text className="text-2xl font-interBold mt-6 mb-4">Invited Members</Text>
   {invitedMembers.length > 0 ? (
   invitedMembers.map((member, index) => (
     <View key={member.user_id} className="gap-1">
       {renderInviteMember({ item: member })}
     </View>
   ))): (
-    <Text className="text-gray-500 bg-gray-100 rounded-lg my-2 text-center p-10">No invited members</Text>
+    <Text className="text-gray-500 bg-gray-100 font-poppins rounded-lg my-2 text-center p-10">No invited members</Text>
   )}
 </View>
           

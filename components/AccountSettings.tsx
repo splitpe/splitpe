@@ -99,9 +99,9 @@ getProfile()
             </TouchableOpacity>
           </View>
           <View className="mt-4 items-center">
-            <Text className="text-white text-xl font-bold">{profile?.full_name}</Text>
+            <Text className="text-white font-interBold text-xl font-bold">{profile?.full_name}</Text>
             <View className="flex-row items-center mt-1">
-              <Text className="text-gray-100 text-sm">{profile?.email}</Text>
+              <Text className="text-gray-100 font-inter text-sm">{profile?.email}</Text>
               <TouchableOpacity className="ml-2">
               </TouchableOpacity>
             </View>
@@ -128,14 +128,14 @@ getProfile()
 
       {/* Settings Sections */}
       <View className="px-4 mt-6">
-        <Text className="text-lg font-bold text-gray-900 mb-4 px-2">Settings</Text>
+        <Text className="text-lg font-poppinsBold text-gray-900 mb-4 px-2">Settings</Text>
         
         <View className="bg-white rounded-2xl shadow-sm">
           <TouchableOpacity className="flex-row items-center p-4 border-b border-gray-100" onPress={() => {router.push('/(group)/(members)/(crud)/profile')}}>
             <View className="bg-blue-100 p-2 rounded-lg">
               <UserRoundPen size={20} color="#2563eb" />
             </View>
-            <Text className="flex-1 ml-3 text-gray-700 font-medium">Profile Settings</Text>
+            <Text className="flex-1 ml-3 text-gray-700 font-poppinsSemiBold">Profile Settings</Text>
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
           
@@ -143,7 +143,7 @@ getProfile()
             <View className="bg-orange-100 p-2 rounded-lg">
               <Bell size={20} color="#ea580c" />
             </View>
-            <Text className="flex-1 ml-3 text-gray-700 font-medium">Invitations</Text>
+            <Text className="flex-1 ml-3 text-gray-700 font-poppinsSemiBold">Invitations</Text>
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
           
@@ -151,19 +151,19 @@ getProfile()
             <View className="bg-green-100 p-2 rounded-lg">
               <Lock size={20} color="#16a34a" />
             </View>
-            <Text className="flex-1 ml-3 text-gray-700 font-medium">Password Reset</Text>
+            <Text className="flex-1 ml-3 text-gray-700 font-poppinsSemiBold">Password Reset</Text>
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
         </View>
 
-        <Text className="text-lg font-bold text-gray-900 mt-8 mb-4 px-2">Feedback</Text>
+        <Text className="text-lg font-bold text-gray-900 font-poppinsBold mt-8 mb-4 px-2">Feedback</Text>
         
         <View className="bg-white rounded-2xl shadow-sm">
           <TouchableOpacity className="flex-row items-center p-4 border-b border-gray-100">
             <View className="bg-yellow-100 p-2 rounded-lg">
               <Star size={20} color="#ca8a04" />
             </View>
-            <Text className="flex-1 ml-3 text-gray-700 font-medium">Rate App</Text>
+            <Text className="flex-1 ml-3 text-gray-700 font-poppinsSemiBold">Rate App</Text>
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
           
@@ -171,7 +171,7 @@ getProfile()
             <View className="bg-purple-100 p-2 rounded-lg">
               <MessageCircleQuestion size={20} color="#7c3aed" />
             </View>
-            <Text className="flex-1 ml-3 text-gray-700 font-medium">Help & Support</Text>
+            <Text className="flex-1 ml-3 text-gray-700 font-poppinsSemiBold">Help & Support</Text>
             <ChevronRight size={20} color="#9ca3af" />
           </TouchableOpacity>
         </View>
@@ -180,7 +180,7 @@ getProfile()
         <TouchableOpacity className="mt-8 mb-8 mx-2" onPress={() => supabase.auth.signOut()}>
           <View className="flex-row items-center justify-center bg-red-50 p-4 rounded-xl">
             <LogOut size={20} color="#ef4444" />
-            <Text className="ml-2 text-red-600 font-medium">Log Out</Text>
+            <Text className="ml-2 text-red-600 font-poppinsSemiBold">Log Out</Text>
           </View>
         </TouchableOpacity>
       </View>

@@ -39,6 +39,9 @@ export default function SignUp() {
     projectId: 1
   }
 
+
+
+
   // Function to generate and upload UI Avatar
   const generateAndUploadAvatar = async (name: string) => {
     try {
@@ -53,26 +56,31 @@ export default function SignUp() {
       const uiAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=200&bold=true&format=png`;
 
 
-      console.log(uiAvatarUrl);
+      console.log(`Generated avatar URL: ${uiAvatarUrl}`);
       // Fetch the image
       const response = await fetch(uiAvatarUrl);
-      const blob = await response.blob();
-
+      console.log("The response is: ",response);
+      // const blob = await response.blob();
+      // console.log("The blob is: ",blob);
       // Generate a unique filename
-      const fileName = `avatar-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.png`;
+      const fileName = `${Date.now()}.jpeg`;
+
+      console.log("FileName is: ",fileName);
+      const arrayBuffer = await response.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+  
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
         .from('avatars')
-        .upload(fileName, blob, {
-          contentType: 'image/png',
-          cacheControl: '3600',
-          upsert: false
-        });
+        .upload(fileName, uint8Array, {
+          contentType: 'image/png'});
+
+        console.log("The image data is: ",data);
 
       if (error) throw error;
 
-      // Get the public URL
+//      Get the public URL
       // const { data: { publicUrl } } = supabase.storage
       //   .from('avatars')
       //   .getPublicUrl(fileName);
@@ -110,6 +118,7 @@ export default function SignUp() {
             setAvatarUrl(generatedAvatarUrl);
             await updateUserProfile(userId, fullname, generatedAvatarUrl);
           } else {
+            
             await updateUserProfile(userId, fullname, avatarUrl);
           }
         } else {

@@ -232,10 +232,10 @@ export default function ExpenseBlock({ id, groupID }) {
     return (
 <View className="bg-white rounded-xl m-4 p-4 shadow-lg">
 
-  <View className="flex-row items-center mb-2">
+  <View className="flex-row items-center mb-3 border-b border-gray-200">
     
   <View
-      className="flex-row items-center py-1"
+      className="flex-row items-center py-2"
     >
         {expenseCategory?(<View className="w-16 h-16 bg-primary-light rounded-full items-center justify-center mr-3">
         <expenseCategory.iconSet name={expenseCategory.icon} size={24} color={Colors.primary.DEFAULT} />
@@ -243,18 +243,18 @@ export default function ExpenseBlock({ id, groupID }) {
       ):(<View className="w-10 h-10 bg-primary-light rounded-full items-center justify-center mr-3"/>)}
     </View>
 
-    <Text className="flex-1 text-lg font-bold">{expense.description}</Text>
-    <Text className="text-lg font-bold">₹ {expense.amount}</Text>
+    <Text className="flex-1 text-lg font-poppinsBold">{expense.description}</Text>
+    <Text className="text-lg font-poppinsBold">₹ {expense.amount}</Text>
   </View>
-  <Text className="text-primary-dark text-md font-semibold mb-4">Paid by</Text>
+  <Text className="text-primary-dark text-md font-poppinsSemiBold mb-4">Paid by</Text>
   {payers.map((payer) => (
   <View key={payer.profiles.id} className="flex-row items-center mb-4">
     <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />
     <Text className="flex-1 text-gray-500 font-sans">{payer.profiles?.full_name}</Text>
-    <Text className="font-bold">₹ {payer.paid_amount}</Text>
+    <Text className="font-poppinsSemiBold">₹ {payer.paid_amount}</Text>
   </View>
   ))}
-  <Text className="text-primary-dark text-md font-semibold mb-4">UnPaid bill</Text>
+  <Text className="text-primary-dark text-md font-poppinsSemiBold mb-4">UnPaid bill</Text>
   {splits.map((split) => (
     <View key={split.profiles.id} className="flex-row items-center mb-2">
       <View className="w-8 h-8 rounded-full bg-gray-300 mr-3" />

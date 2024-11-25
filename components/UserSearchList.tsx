@@ -105,7 +105,7 @@ export default function UserSearchList(props) {
     <View className="flex-1 bg-white">
       <View className="p-4 bg-gray-100">
         <TextInput
-          className="bg-white border border-gray-300 rounded-lg px-4 py-2"
+          className="bg-white border font-inter border-gray-300 rounded-lg px-4 py-2"
           placeholder="Search users...🔎"
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -135,7 +135,7 @@ export default function UserSearchList(props) {
 ))}</ScrollView>
       ): (
                   <View className="p-4">
-                  <Text className="text-center text-gray-500">No users found</Text>
+                  <Text className="text-center font-inter text-gray-500">No users found</Text>
                 </View>
       
      )} 

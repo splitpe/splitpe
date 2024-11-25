@@ -37,8 +37,8 @@ export default function Home() {
     <>
 <CustomStackScreen />
       <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="bg-primary items-start justify-center p-4">
-        <Text className="text-2xl font-bold text-white">Expense Tracker</Text>
+      <View className="bg-primary items-center justify-center p-4">
+        <Text className="text-2xl font-interBold text-white">Expense Tracker</Text>
       </View>
       <TransactionListener ></TransactionListener>
     </SafeAreaView>

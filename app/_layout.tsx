@@ -14,11 +14,16 @@ export default function RootLayout() {
   const [fontsLoaded] = useFonts({
     Poppins: require('~/assets/fonts/Poppins-Regular.ttf'),
     PoppinsBold: require('~/assets/fonts/Poppins-Bold.ttf'),
+    PoppinsMedium: require('~/assets/fonts/Poppins-Medium.ttf'),
+    PoppinsSemiBold: require('~/assets/fonts/Poppins-SemiBold.ttf'),
     InterBlack: require('~/assets/fonts/Inter-Black.otf'),
     Inter: require('~/assets/fonts/Inter-Regular.otf'),
     InterBold: require('~/assets/fonts/Inter-Bold.otf'),
     Narnoor: require('~/assets/fonts/Narnoor-Regular.ttf'),
     NarnoorBold: require('~/assets/fonts/Narnoor-Bold.ttf'),
+    AmaranthRegular:require('~/assets/fonts/Amaranth-Regular.otf'),
+    AmaranthBold:require('~/assets/fonts/Amaranth-Bold.otf'),
+    AmaranthItalic:require('~/assets/fonts/Amaranth-Italic.otf'),
   });
 
   if (!fontsLoaded) {

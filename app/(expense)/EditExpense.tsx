@@ -8,7 +8,7 @@ import { supabase } from '~/utils/supabase';
 import { useAuth } from '~/contexts/AuthProvider';
 import { generateSignedUrl } from '~/helper/functions';
 import CustomStackScreen from '~/components/CustomStackScreen';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 
 export default function EditExpenseScreen() {
     const [groupMembers, setGroupMembers] = useState([]);
@@ -191,6 +191,120 @@ export default function EditExpenseScreen() {
     
     
     
+    async function handleUpdateBalances() {
+      
+
+      try {
+        console.log('Updating balances for expense with ID:', expenseId);
+        // Step 1: Get all the expense details, including payments and splits
+        const { data: expenseDetails, error: expenseError } = await supabase
+          .from('expenses')
+          .select('*')
+          .eq('id', expenseId)
+          .single();
+    
+        if (expenseError) throw expenseError;
+    
+        const { data: payments, error: paymentsError } = await supabase
+          .from('expense_payments')
+          .select('*')
+          .eq('expense_id', expenseId);
+    
+        if (paymentsError) throw paymentsError;
+    
+        const { data: splits, error: splitsError } = await supabase
+          .from('expense_splits')
+          .select('*')
+          .eq('expense_id', expenseId);
+    
+        if (splitsError) throw splitsError;
+        
+
+        console.log('Expense Details:', expenseDetails);
+        console.log('Payments:', payments);
+        console.log('Splits:', splits);
+        // Step 2: Calculate and reverse balances
+        const totalAmount = expenseDetails.amount;
+    
+        // Create a set of all users involved
+        const allUsers = new Set([
+          ...payments.map(p => p.user_id),
+          ...splits.map(s => s.user_id)
+        ]);
+    
+        // Create a balance matrix for all users
+        const balanceMatrix = {};
+        for (const userId of allUsers) {
+          balanceMatrix[userId] = {};
+          for (const otherId of allUsers) {
+            if (userId !== otherId) {
+              balanceMatrix[userId][otherId] = 0;
+            }
+          }
+        }
+    
+        // Calculate what each person paid (to be reversed)
+        const paidAmounts = {};
+        payments.forEach(payment => {
+          paidAmounts[payment.user_id] = parseFloat(payment.paid_amount);
+        });
+    
+        // Calculate what each person owed (to be reversed)
+        const owedAmounts = {};
+        splits.forEach(split => {
+          owedAmounts[split.user_id] = parseFloat(split.owed_amount);
+        });
+    
+        // Calculate reverse balances (negative of original balances)
+        for (const payerId of allUsers) {
+          for (const owerId of allUsers) {
+            if (payerId !== owerId) {
+              const paidAmount = paidAmounts[payerId] || 0;
+              const owedAmount = owedAmounts[owerId] || 0;
+              
+              // Calculate the share this owner owed to this payer (negative to reverse)
+              const shareOfPayment = -((paidAmount / totalAmount) * owedAmount);
+              if (shareOfPayment !== 0) {
+                balanceMatrix[payerId][owerId] += shareOfPayment;
+                balanceMatrix[owerId][payerId] -= shareOfPayment;
+              }
+            }
+          }
+        }
+    
+        // Update balances in database with reversed amounts
+        for (const userId of allUsers) {
+          for (const otherId of Object.keys(balanceMatrix[userId])) {
+            const balanceAmount = balanceMatrix[userId][otherId];
+            if (balanceAmount !== 0) {
+              // Get existing balance
+              const { data: existingBalance, error: balanceError } = await supabase
+                .from('balances')
+                .select()
+                .eq('user_id', userId)
+                .eq('balance_with_user_id', otherId)
+                .eq('group_id', groupID)
+                .single();
+    
+              if (balanceError && balanceError.code !== 'PGRST116') throw balanceError;
+    
+              if (existingBalance) {
+                // Update existing balance with reversed amount
+                await supabase
+                  .from('balances')
+                  .update({
+                    amount: existingBalance.amount + balanceAmount,
+                    last_updated: new Date().toISOString()
+                  })
+                  .eq('id', existingBalance.id);
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error updating balances:', error);
+      }
+    }
 
     // Handle updating the expense
     const handleUpdateExpense = async () => {
@@ -232,6 +346,12 @@ export default function EditExpenseScreen() {
                 .eq('id', expenseId);
 
             if (expenseError) throw expenseError;
+
+            // Update balances
+            await  handleUpdateBalances();
+
+
+
 
             // Delete existing payments and splits
             await supabase.from('expense_payments').delete().eq('expense_id', expenseId);
@@ -276,7 +396,109 @@ export default function EditExpenseScreen() {
 
             if (splitError) throw splitError;
 
+    // Step 4: Calculate and update balances
+    // Create a map of all users involved
+    const allUsers = new Set([
+      ...paymentsData.map(p => p.user_id),
+      ...splitsData.map(s => s.user_id)
+    ]);
+
+    console.log('Payers',paymentsData);
+    console.log('Splits',splitsData);
+
+    // Create a balance matrix for all users
+    const balanceMatrix = {};
+    for (const userId of allUsers) {
+      balanceMatrix[userId] = {};
+      for (const otherId of allUsers) {
+        if (userId !== otherId) {
+          balanceMatrix[userId][otherId] = 0;
+        }
+      }
+    }
+
+    console.log("Balance Matrix start",balanceMatrix);
+
+    // Calculate what each person paid
+    const paidAmounts = {};
+    paymentsData.forEach(payer => {
+      paidAmounts[payer.user_id] = parseFloat(payer.paid_amount);
+    });
+
+    // Calculate what each person owes
+    const owedAmounts = {};
+    splitsData.forEach(split => {
+      owedAmounts[split.user_id] = split.owed_amount;
+    });
+
+    console.log("Paid Amounts",paidAmounts);
+    console.log("Owed Amounts",owedAmounts);
+
+    // Calculate net balances
+    for (const payerId of allUsers) {
+      for (const owerId of allUsers) {
+        if (payerId !== owerId) {
+          const paidAmount = paidAmounts[payerId] || 0;
+          const owedAmount = owedAmounts[owerId] || 0;
+          
+          // Calculate the share this owner owes to this payer
+          const shareOfPayment = (paidAmount / totalAmount) * owedAmount;
+          if (shareOfPayment > 0) {
+            balanceMatrix[payerId][owerId] += shareOfPayment;
+            balanceMatrix[owerId][payerId] -= shareOfPayment;
+          }
+        }
+      }
+    }
+
+    console.log("Balance Matrix Reversed",balanceMatrix);
+
+    // Update balances in database
+    for (const userId of allUsers) {
+      for (const otherId of Object.keys(balanceMatrix[userId])) {
+        const balanceAmount = balanceMatrix[userId][otherId];
+        if (balanceAmount !== 0) {
+          // Check for existing balance
+          const { data: existingBalance, error: balanceError } = await supabase
+            .from('balances')
+            .select()
+            .eq('user_id', userId)
+            .eq('balance_with_user_id', otherId)
+            .eq('group_id', groupID)
+            .single();
+
+          if (balanceError && balanceError.code !== 'PGRST116') throw balanceError;
+          if (existingBalance) {
+            // Update existing balance
+            await supabase
+              .from('balances')
+              .update({
+                amount: existingBalance.amount + balanceAmount,
+                last_updated: new Date().toISOString()
+              })
+              .eq('id', existingBalance.id);
+          } else {
+            // Create new balance record
+            await supabase
+              .from('balances')
+              .insert({
+                user_id: userId,
+                balance_with_user_id: otherId,
+                group_id: groupID,
+                amount: balanceAmount,
+                last_updated: new Date().toISOString()
+              });
+          }
+        }
+      }}
+
+
+
+
+
+
             Alert.alert('Expense updated successfully!');
+            router.back();
             // Optionally navigate back or reset form
         } catch (error) {
             console.error('Error updating expense:', error);

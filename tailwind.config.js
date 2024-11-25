@@ -12,8 +12,13 @@ module.exports = {
         interBlack: ["InterBlack", "sans-serif"],
         interBold: ["InterBold", "sans-serif"],
         poppinsBold: ["PoppinsBold", "sans-serif"],
+        poppinsMedium: ["PoppinsMedium", "sans-serif"],
+        poppinsSemiBold: ["PoppinsSemiBold", "sans-serif"],
         narnoor: ["Narnoor", "sans-serif"],
         narnoorBold: ["NarnoorBold", "sans-serif"],
+        amaranthRegular: ["AmaranthRegular", "sans-serif"],
+        amaranthBold: ["AmaranthBold", "sans-serif"],
+        amaranthItalic: ["AmaranthItalic", "sans-serif"],
       },
       colors: {
         primary: {

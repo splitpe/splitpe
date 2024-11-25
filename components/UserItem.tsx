@@ -56,25 +56,25 @@ View className="border-b border-gray-200"
   <Image 
   source={{ uri: item.avatar_url }}
     //src={{ uri: item.avatar_url.publicUrl }} 
-    className="w-16 h-16 rounded-full"
+    className="w-12 h-12 rounded-full"
   />
  // <Text>{item.avatarUrl}</Text>
 ) : (
-  <View className=" bg-gray-300 w-12 h-12 rounded-full flex justify-center items-center"></View>
+  <View className=" bg-cgray-one w-12 h-12 rounded-full flex justify-center items-center"></View>
 )}
 <View className='flex-1'>
   <View className='flex-row justify-between items-center'>
-<Text className="text-lg text-gray-800">{item.full_name}</Text>
+<Text className="text-md font-inter text-gray-800">{item.full_name}</Text>
 
 {inviteStatus?
     <View className='flex-row items-center text-center'>
-<Text>Invite Sent</Text>
-<MaterialIcons name="send-to-mobile" size={32} color={Colors.primary.DEFAULT}/></View>
+<Text className='text-gray-800 text-sm font-inter'>Invite Sent</Text>
+<MaterialIcons name="mobile-friendly" size={32} color='#f87171'/></View>
 :
 <TouchableOpacity onPress={() => SendInvite(item.id, groupId)}>
 <View className='flex-row items-center text-center'>
-<Text>Invite</Text>
-<MaterialIcons name="send-to-mobile" size={32} color={Colors.primary.DEFAULT}/></View></TouchableOpacity>
+<Text className='text-gray-800 text-sm font-inter'>Invite</Text>
+<MaterialIcons name="send-to-mobile" size={32} color='#10b981'/></View></TouchableOpacity>
 
 
 }

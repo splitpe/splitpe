@@ -1,14 +1,21 @@
 import { Text } from 'react-native';
 
 export default function AmountDisplay({ amount,className }) {
+
+
     const formatAmount = (amount) => {
+
+      if (amount === null || amount === undefined || amount === 0.00 || amount === 0 || amount === '0.00') {
+        return '0.00';
+      }
         if (amount >= 1000000000) {
           return (amount / 1000000000).toFixed(2) + 'B';
         } else if (amount >= 1000000) {
           return (amount / 1000000).toFixed(2) + 'M';
         } else if (amount >= 1000) {
           return (amount / 1000).toFixed(2) + 'K';
-        } else {
+        } else (amount > 0) 
+        {
           return amount.toFixed(2);
         }
       };

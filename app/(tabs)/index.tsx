@@ -93,7 +93,8 @@ const actions = [
     color: '#2EC7AB',
     buttonSize:50,
     textStyle: {
-      fontSize: 16,
+      fontSize: 14,
+      fontFamily: 'Inter',
     },
   },
   {
@@ -104,7 +105,8 @@ const actions = [
     color: '#EA638C',
     buttonSize:50,
     textStyle: {
-      fontSize: 16,
+      fontSize: 14,
+      fontFamily: 'Inter',
     },
   },
   {
@@ -115,7 +117,8 @@ const actions = [
     color: '#257180',
     buttonSize:50,
     textStyle: {
-      fontSize: 16,
+      fontSize: 14,
+      fontFamily: 'Inter',
     },
   },
 

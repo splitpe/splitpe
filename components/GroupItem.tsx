@@ -169,7 +169,7 @@ return (
  
     <View className="flex-1 mt-1">
 <View className="flex-row justify-center">
-<View className="h-24 w-16 h-full bg-primary justify-center gap-3 items-center rounded-br-lg rounded-bl-lg rounded-tr-lg">
+<View className="h-24 min-h-24 w-16 h-full bg-primary justify-center gap-3 items-center rounded-br-xl rounded-bl-xl rounded-tr-xl">
   { async function name(params:type) {
     userbalance
   }.length > 0 ? 
@@ -179,7 +179,10 @@ return (
   )
   :(<View className="w-10 h-10 rounded-full bg-gray-200" />
     )}
-  {userbalance?.amount && (<AmountDisplay amount={userbalance?.amount} className="text-white text-xs font-semibold" />)}
+  {userbalance?.amount==0 ?
+  (<AmountDisplay amount='0.00' className="text-white text-xs font-semibold" />)
+   :(<AmountDisplay amount={userbalance?.amount} className="text-white text-xs font-semibold" />)
+  }
   
   </>)
   : (<View className="w-10 h-10 rounded-full bg-gray-200" />)}
@@ -194,11 +197,11 @@ return (
                   
                   balances.map((balance, index) => (
                     <View key={index} className="w-[30%] flex-grow-0 flex-shrink-0 p-2 border border-gray-200 bg-white rounded-full">
-                      <View className="flex-row items-center">
+                      <View className="flex-row items-center ">
                         {balance?.avatarUrl ? (
                           <Image source={{ uri: balance?.avatarUrl }} className="w-6 h-6 rounded-full" />
                         ) : (
-                          <View className="w-6 h-6 rounded-full bg-gray-200" />
+                          <View className="w-6 h-6 rounded-full bg-gray-300" />
                         )}
                         <View className="flex-1 h-6  rounded-full items-center justify-center">
                           <AmountDisplay amount={balance?.amount} className="" />

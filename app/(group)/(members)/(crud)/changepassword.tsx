@@ -55,20 +55,20 @@ const PasswordReset = () => {
     <>
     <CustomStackScreen screen="changepassword" />
     <View className='flex-1 justify-center px-4 bg-gray-100'>
-      <Text className='text-2xl font-semibold text-center mb-6'>Reset Password</Text>
+      <Text className='text-2xl font-interBold text-center mb-6'>Reset Password</Text>
       
-      <Text className='text-lg font-medium mb-2'>Current Password</Text>
+      <Text className='text-lg font-interBold mb-2'>Current Password</Text>
       <TextInput
-        className='border p-4 rounded-md bg-white mb-4'
+        className='border p-4 rounded-md bg-white font-inter mb-4'
         secureTextEntry
         placeholder="Enter current password"
         value={currentPassword}
         onChangeText={setCurrentPassword}
       />
       
-      <Text className='text-lg font-medium mb-2'>New Password</Text>
+      <Text className='text-lg font-interBold mb-2'>New Password</Text>
       <TextInput
-        className='border p-4 rounded-md bg-white mb-4'
+        className='border p-4 rounded-md font-inter bg-white mb-4'
         secureTextEntry
         placeholder="Enter new password"
         value={newPassword}

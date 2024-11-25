@@ -88,13 +88,13 @@ export default function TransactionListener() {
       {/* Header */}
       <View className="p-4 bg-white border-b border-gray-200 flex-row justify-between items-center">
         <View>
-          <Text className="text-lg font-semibold text-gray-900">Transaction Listener</Text>
-          <Text className="text-sm text-gray-500">{messages.length} messages</Text>
-          <TouchableOpacity onPress={() => clearMessages()}><Text className="text-sm text-red-500">Clear All Messages</Text></TouchableOpacity>
+          <Text className="text-lg font-interBold text-gray-900">Transaction Listener</Text>
+          <Text className="text-sm text-gray-500 font-inter">{messages.length} messages</Text>
+          <TouchableOpacity onPress={() => clearMessages()}><Text className="text-sm font-inter text-red-500">Clear All Messages</Text></TouchableOpacity>
         </View>
         <View className="flex-row items-center space-x-2">
         
-          <Text className="text-sm text-gray-600">{isEnabled ? 'Enabled' : 'Disabled'}</Text>
+          <Text className="text-sm font-interBold text-gray-600">{isEnabled ? 'Enabled' : 'Disabled'}</Text>
           <Switch
             trackColor={{ false: '#767577', true: '#81b0ff' }}
             thumbColor={isEnabled ? '#1d4ed8' : '#f4f3f4'}
@@ -115,7 +115,7 @@ export default function TransactionListener() {
               <View className="flex-row justify-between items-center mb-2">
                 <View className="flex-row items-center space-x-2 gap-2">
                   <View className={`w-4 h-4 rounded-full ${message.type === 'credit' ? 'bg-green-500' : 'bg-red-500'}`} />
-                  <Text className="text-sm font-medium text-gray-900">
+                  <Text className="text-sm font-interBold text-gray-900">
                     Rs. {message.amount.toFixed(2)}
                   </Text>
                 </View>
@@ -134,8 +134,8 @@ export default function TransactionListener() {
               </TouchableOpacity>
                 </View>
               </View>
-              <Text className="text-sm text-gray-600">{message.text}</Text>
-              <Text className="text-xs text-gray-400 mt-2">{message.timestamp}</Text>
+              <Text className="text-sm font-inter text-gray-600">{message.text}</Text>
+              <Text className="text-xs font-inter text-gray-400 mt-2">{message.timestamp}</Text>
             </View>
           ))}
         </Animated.View>

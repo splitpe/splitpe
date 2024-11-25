@@ -91,14 +91,14 @@ const ActivityItem = ({ activity, onPress }: { activity: Activity; onPress: () =
         <ActivityIcon type={activity.activity_type} />
       </View>
       <View className="flex-1">
-        <Text className="text-base font-semibold text-gray-800">
+        <Text className="text-base font-interBold text-gray-800">
           {getActivityDescription()}
         </Text>
-        <Text className="text-sm text-gray-600 mt-1">
+        <Text className="text-sm font-inter text-gray-400 mt-1">
           {new Date(activity.timestamp).toLocaleString()}
         </Text>
       </View>
-      <Ionicons name="chevron-forward" size={20} className="text-gray-400" />
+      <Ionicons name="chevron-forward" size={20} className="text-gray-500 opacity-45" />
     </TouchableOpacity>
   );
 };

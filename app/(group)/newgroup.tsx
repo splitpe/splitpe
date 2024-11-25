@@ -32,6 +32,57 @@ export default function CreateGroup() {
   const { user } = useAuth();
 
 
+
+
+  const generateAndUploadAvatar = async (name: string) => {
+    try {
+      // Generate avatar URL with UI Avatars
+      const initials = name
+        .split(' ')
+        .map(word => word[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+      
+      const uiAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&color=fff&size=200&bold=true&format=png`;
+
+
+      console.log(`Generated avatar URL: ${uiAvatarUrl}`);
+      // Fetch the image
+      const response = await fetch(uiAvatarUrl);
+      console.log("The response is: ",response);
+      // const blob = await response.blob();
+      // console.log("The blob is: ",blob);
+      // Generate a unique filename
+      const fileName = `${Date.now()}.jpeg`;
+
+      console.log("FileName is: ",fileName);
+      const arrayBuffer = await response.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+  
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, uint8Array, {
+          contentType: 'image/png'});
+
+        console.log("The image data is: ",data);
+
+      if (error) throw error;
+
+//      Get the public URL
+      // const { data: { publicUrl } } = supabase.storage
+      //   .from('avatars')
+      //   .getPublicUrl(fileName);
+
+      return fileName;
+    } catch (error) {
+      console.error('Error generating/uploading avatar:', error);
+      return null;
+    }
+  };
+
   
 
 
@@ -54,12 +105,22 @@ export default function CreateGroup() {
     console.log('Group already exists:', existingGroup);
     Alert.alert("Error creating the group:", 'Group name already exists');
   } else {
+
+    var g_avatar_url = avatarUrl;
+    if(!avatarUrl)
+    {
+      const generatedAvatar = await generateAndUploadAvatar(groupname);
+      if (generatedAvatar) {
+        g_avatar_url = generatedAvatar;
+        setAvatarUrl(generatedAvatar);
+      }
+    }
     const { data, error } = await supabase
       .from('groups')
       .insert([
         {
           name: groupname,
-          profile_picture_url: avatarUrl,
+          profile_picture_url: g_avatar_url,
           currency: currency?.code,
           created_by: user.id
         }
