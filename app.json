@@ -44,7 +44,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.splitpe"
+      "package": "com.splitpe",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e4017e70-e0d6-49ef-b416-295c8d9bbd85"
+      }
     }
   }
 }
