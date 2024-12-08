@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, FlatList } from 'react-native';
-import SmsListener from 'react-native-sms-listener';
+import SmsListener from 'react-native-android-sms-listener';
 
 const BankMessageReader = () => {
   const [bankMessages, setBankMessages] = useState([]);
@@ -15,6 +15,7 @@ const BankMessageReader = () => {
         const [ , account, amountStr, , type, amountFormatted ] = match;
         
         const formattedMessage = {
+          id: message.id,
           text: message.body,
           account,
           amount: parseFloat(amountFormatted || amountStr),

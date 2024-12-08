@@ -9,6 +9,7 @@ import Avatar from '~/components/Avatar'
 import CurrencyPicker, { currencies } from '~/components/Currencypicker'
 import CustomStackScreen from '~/components/CustomStackScreen';
 import { Colors } from '~/types/colors';
+import { activityInsertUtils } from '~/helper/insertactivity';
 
 
 
@@ -173,9 +174,19 @@ export default function CreateGroup() {
           });
         }
 
+        const {data: userdata,error: usererror} = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
 
+
+
+      await activityInsertUtils.insertUserJoinedGroup({user_name:userdata?.full_name,group_name:groupname}, user.id,data.id );
+      await activityInsertUtils.insertGroupCreated({ group_name: groupname, description: '' }, user.id, data.id);  
       Alert.alert("New Group Created", `Group ${groupname} created successfully!`);
-      router.navigate(`/(group)/${data.id}`);
+      //router.navigate(`/(group)/${data.id}`);
+      router.replace(`/(group)/${data.id}`);
       }
     }
   }

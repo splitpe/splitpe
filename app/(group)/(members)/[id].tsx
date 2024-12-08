@@ -19,6 +19,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { FloatingAction } from 'react-native-floating-action';
+import { activityInsertUtils } from '~/helper/insertactivity';
 
 
 
@@ -128,7 +129,7 @@ export default function CreateMember() {
     const fetchGroupMembers = async () => {
       const { data, error } = await supabase
       .from('user_groups')
-      .select('id,user_id, group_id,role,user:profiles!user_groups_user_id_fkey(full_name,avatar_url)')
+      .select('id,user_id, group_id,role,user:profiles!user_groups_user_id_fkey(full_name,avatar_url),group:groups!user_groups_group_id_fkey(name,profile_picture_url)')
       .eq('group_id', groupId)
 
       if (error) {
@@ -205,6 +206,9 @@ export default function CreateMember() {
  }
 
   async function deleteGroupMember(id) {
+    console.log("Delete Group Member User Name",groupMembers.filter((member) => member.id === id)[0].user.full_name);
+    console.log("Delete Group Member Group Name",groupMembers.filter((member) => member.id === id)[0].group.name);
+    await activityInsertUtils.insertUserLeftGroup({user_name:groupMembers.filter((member) => member.id === id)[0].user.full_name,group_name:groupMembers.filter((member) => member.id === id)[0].group.name},user.id,groupId);
     const {data,error}= await supabase
     .from('user_groups')
     .delete()
@@ -215,6 +219,7 @@ export default function CreateMember() {
       console.error(error);
     }
     else {
+
       const member=groupMembers.filter((member) => member.id === id);
       const {data,error}= await supabase
       .from('invitations')

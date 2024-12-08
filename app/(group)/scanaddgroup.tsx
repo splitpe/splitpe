@@ -5,6 +5,7 @@ import { supabase } from '~/utils/supabase';
 import { useAuth } from '~/contexts/AuthProvider';
 import { router } from 'expo-router';
 import { Colors } from '~/types/colors';
+import { activityInsertUtils } from '~/helper/insertactivity';
 
 export default function QRCodeScanner() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -20,6 +21,7 @@ export default function QRCodeScanner() {
       setHasPermission(status === 'granted');
     })();
   }, []);
+
 
   async function handleAccept({user_id, group_id}) {
     console.log("Handle Accept is called",user_id, group_id)
@@ -87,7 +89,21 @@ export default function QRCodeScanner() {
                   group_id: group_id,
                   status: 'accepted',
                 });
-            router.navigate('/');
+
+                const {data: userdata,error: usererror} = await supabase
+                .from('profiles')
+                .select('full_name')
+                .eq('id', user_id)
+                .single();
+
+                const {data: groupdata,error: grouperror} = await supabase
+                .from('groups')
+                .select('name')
+                .eq('id', group_id)
+                .single();
+              await activityInsertUtils.insertUserInvited({user_name: userdata?.full_name,group_name:groupdata?.name}, user.id, group_id);
+              await activityInsertUtils.insertUserJoinedGroup({user_name:userdata?.full_name,group_name:groupdata?.name},user.id, group_id);
+              router.navigate('/');
               }
           // Implement accept logic here
         };

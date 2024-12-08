@@ -5,6 +5,7 @@ import CustomStackScreen from '~/components/CustomStackScreen';
 
 import { useAuth } from '~/contexts/AuthProvider';
 import { generateSignedUrl } from '~/helper/functions';
+import { activityInsertUtils } from '~/helper/insertactivity';
 import { supabase } from '~/utils/supabase';
 
 // Sample invitation data
@@ -40,7 +41,7 @@ const invitations = [
 const InvitationItem = ({ invitation, onAccept, onReject }) => (
   <View className="flex-row items-center p-4 bg-white border-b border-gray-200">
     <View className="flex-row items-center flex-1 gap-3">
-    {invitation.inviter.avatar_url?
+    {invitation.inviter?.avatar_url?
       <Image
       source={{ uri: invitation.inviter.avatar_url }}
       className="w-12 h-12 rounded-full mr-4"
@@ -107,10 +108,12 @@ const [invitations,setInvitations]=useState([]);
             console.error(error);
           }
           else {
+
+            console.log("Invities are: ",data);
     
             const updatedInvitedMembers = await Promise.all(data.map(async (item) => {
-              if (item.inviter.avatar_url) {
-                const inviterSignedUrl = await generateSignedUrl('avatars', item.user.avatar_url, 3600);
+              if (item.inviter?.avatar_url) {
+                const inviterSignedUrl = await generateSignedUrl('avatars', item.inviter.avatar_url, 3600);
                 return {
                   ...item,
                   inviter:{
@@ -134,7 +137,7 @@ const [invitations,setInvitations]=useState([]);
               return item;
             }));
     
-    
+            console.log("Just for testing",updatedInvitedMembers);
             console.log('Invited Member in Invites',updatedInvitedMembers);
             setInvitations(updatedInvitedMembers);
           }
@@ -162,6 +165,16 @@ const [invitations,setInvitations]=useState([]);
     }
     else
     {
+
+
+      const {data: userdata,error: usererror} = await supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', item.user_id)
+      .single();
+
+
+      await activityInsertUtils.insertUserJoinedGroup({user_name:userdata?.full_name,group_name:item.groups.name},item.user_id,item.group_id);
 
     const {data,error} = await supabase
     .from('invitations')

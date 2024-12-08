@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 
@@ -14,6 +14,8 @@ type Activity = {
 type ActivityFeedProps = {
   activities: Activity[];
   onActivityPress: (activity: Activity) => void;
+  refreshing: boolean;
+  onRefresh: () => void;
 };
 
 const ActivityIcon = ({ type }: { type: string }) => {
@@ -31,10 +33,13 @@ const ActivityIcon = ({ type }: { type: string }) => {
       break;
     case 'expense_added':
     case 'expense_updated':
-    case 'expense_deleted':
       iconName = 'cash';
       iconColor = 'text-blue-500';
       break;
+    case 'expense_deleted':
+        iconName = 'cash';
+        iconColor = 'text-red-500';
+        break;
     case 'payment_made':
       iconName = 'card';
       iconColor = 'text-yellow-500';
@@ -53,9 +58,9 @@ const ActivityItem = ({ activity, onPress }: { activity: Activity; onPress: () =
       case 'group_created':
         return `Group "${activity.details.group_name}" created`;
       case 'user_invited':
-        return `${activity.details.user_name} was invited to the group`;
+        return `${activity.details.user_name} was invited to the group ${activity.details.group_name}`;
       case 'user_joined_group':
-        return `${activity.details.user_name} joined the group`;
+        return `${activity.details.user_name} joined the group ${activity.details.group_name}`;
       case 'expense_added':
         return `New expense: ${activity.details.expense_description} (₹${activity.details.amount})`;
       case 'expense_updated':
@@ -65,7 +70,7 @@ const ActivityItem = ({ activity, onPress }: { activity: Activity; onPress: () =
       case 'payment_made':
         return `Payment made: ₹${activity.details.amount}`;
       case 'user_left_group':
-        return `${activity.details.user_name} left the group`;
+        return `${activity.details.user_name} left the group ${activity.details.group_name}`;
       default:
         return 'Unknown activity';
     }
@@ -75,9 +80,9 @@ const ActivityItem = ({ activity, onPress }: { activity: Activity; onPress: () =
     switch (activity.activity_type) {
       case 'group_created': return 'bg-purple-100';
       case 'user_invited': case 'user_joined_group': return 'bg-green-100';
-      case 'expense_added': case 'expense_updated': case 'expense_deleted': return 'bg-blue-100';
+      case 'expense_added': case 'expense_updated': return 'bg-blue-100';
       case 'payment_made': return 'bg-yellow-100';
-      case 'user_left_group': return 'bg-red-100';
+      case 'user_left_group': case 'expense_deleted': return 'bg-red-100';
       default: return 'bg-gray-100';
     }
   };
@@ -103,7 +108,7 @@ const ActivityItem = ({ activity, onPress }: { activity: Activity; onPress: () =
   );
 };
 
-export default function ActivityFeed({ activities, onActivityPress }: ActivityFeedProps) {
+export default function ActivityFeed({ activities, onActivityPress,onRefresh,refreshing }: ActivityFeedProps) {
   return (
     <View className="flex-1 bg-gray-50 rounded-2xl">
       <FlatList
@@ -117,6 +122,7 @@ export default function ActivityFeed({ activities, onActivityPress }: ActivityFe
             <Text className="text-lg text-gray-500">No activities yet</Text>
           </View>
         }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={{ padding: 16 }}
       />
     </View>
